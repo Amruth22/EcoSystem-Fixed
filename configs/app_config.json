@@ -1,0 +1,14 @@
+{
+  "llm_config": {
+    "model": "gemini/gemini-2.0-flash",
+    "max_tokens": 3000,
+    "temperature": 0.3,
+    "timeout": 30
+  },
+  "database": {
+    "url": "sqlite:///api_ecosystem.db"
+  },
+  "redis": {
+    "url": "redis://localhost:6379/0"
+  }
+}
