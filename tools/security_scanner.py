@@ -1,20 +1,53 @@
 from crewai.tools import BaseTool
+from typing import Optional, Type, List, Dict
+from pydantic import BaseModel, Field
 import json
 import random
-from typing import List, Dict
+import logging
+
+logger = logging.getLogger(__name__)
+
+class SecurityScannerInput(BaseModel):
+    """Input schema for Security Scanner Tool."""
+    target: Optional[str] = Field(
+        default=None,
+        description="Target to scan (API endpoint, URL, repository). If not provided, scans default target."
+    )
+    scan_type: str = Field(
+        default="comprehensive",
+        description="Type of scan: 'comprehensive', 'owasp', or 'compliance'"
+    )
 
 class SecurityScannerTool(BaseTool):
     name: str = "Security Scanner Tool"
-    description: str = "Automated security vulnerability detection and compliance checking"
+    description: str = """Automated security vulnerability detection and compliance checking.
 
-    def _run(self, target: str = None, scan_type: str = "comprehensive") -> str:
+    Parameters:
+    - target (optional): Target to scan (API endpoint, URL, repository)
+    - scan_type: Type of scan - 'comprehensive', 'owasp', or 'compliance' (default: comprehensive)
+
+    Returns: JSON with security assessment, vulnerabilities found, and recommendations.
+
+    Example usage:
+    - {} - comprehensive scan of default target
+    - {"target": "http://localhost:8000"} - scan specific endpoint
+    - {"target": "http://api.example.com", "scan_type": "owasp"} - OWASP-focused scan
+    """
+    args_schema: Type[BaseModel] = SecurityScannerInput
+
+    def _run(self, target: Optional[str] = None, scan_type: str = "comprehensive", **kwargs) -> str:
         """
         Perform security scanning and compliance checking.
-        
+
         Args:
             target: Target to scan (API endpoint, repository, etc.)
             scan_type: Type of scan to perform (comprehensive, owasp, compliance)
+            **kwargs: Additional arguments (ignored for compatibility)
+
+        Returns:
+            JSON string with security assessment results
         """
+        logger.info(f"Security Scanner called with: target={target}, scan_type={scan_type}, kwargs={kwargs}")
         try:
             security_data = self._generate_sample_security_assessment(target, scan_type)
             analysis = self._analyze_security_findings(security_data)
@@ -27,9 +60,16 @@ class SecurityScannerTool(BaseTool):
             }
             
             return json.dumps(result, indent=2)
-            
+
         except Exception as e:
-            return f"Security scan failed: {str(e)}"
+            import traceback
+            error_traceback = traceback.format_exc()
+            logger.error(f"Security scan failed: {e}\n{error_traceback}")
+            return json.dumps({
+                "error": f"Security scan failed: {str(e)}",
+                "error_type": type(e).__name__,
+                "traceback": error_traceback
+            })
 
     def _generate_sample_security_assessment(self, target: str = None, scan_type: str = "comprehensive") -> Dict:
         """Generate sample security assessment data."""
