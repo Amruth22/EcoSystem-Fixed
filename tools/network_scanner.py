@@ -1,21 +1,48 @@
 from crewai.tools import BaseTool
+from typing import Optional, Type
+from pydantic import BaseModel, Field
 import requests
 import socket
 import json
-from typing import Optional
+import logging
+
+logger = logging.getLogger(__name__)
+
+class NetworkScannerInput(BaseModel):
+    """Input schema for Network Scanner Tool."""
+    network_range: Optional[str] = Field(
+        default=None,
+        description="Network range to scan (e.g., '192.168.1.0/24'). If not provided, scans local network."
+    )
 
 class NetworkScannerTool(BaseTool):
     name: str = "Network Scanner Tool"
-    description: str = "Scan network for API endpoints and active services"
+    description: str = """Scan network for API endpoints and active services.
 
-    def _run(self, network_range: str = None) -> str:
+    Parameters:
+    - network_range (optional): Network range to scan. If not provided, automatically scans local network.
+
+    Returns: JSON with discovered services, open ports, and API endpoints.
+
+    Example usage:
+    - {} - scan local network
+    - {"network_range": "192.168.1.0/24"} - scan specific range
+    """
+    args_schema: Type[BaseModel] = NetworkScannerInput
+
+    def _run(self, network_range: Optional[str] = None, **kwargs) -> str:
         """
         Scan network for API endpoints.
-        
+
         Args:
             network_range: Network range to scan (e.g., '192.168.1.0/24')
                           If None, will scan local network
+            **kwargs: Additional arguments (ignored for compatibility)
+
+        Returns:
+            JSON string with scan results
         """
+        logger.info(f"Network Scanner called with: network_range={network_range}, kwargs={kwargs}")
         try:
             if not network_range:
                 local_ip = self._get_local_ip()
@@ -51,9 +78,16 @@ class NetworkScannerTool(BaseTool):
             }
             
             return json.dumps(result, indent=2)
-            
+
         except Exception as e:
-            return f"Network scan failed: {str(e)}"
+            import traceback
+            error_traceback = traceback.format_exc()
+            logger.error(f"Network scan failed: {e}\n{error_traceback}")
+            return json.dumps({
+                "error": f"Network scan failed: {str(e)}",
+                "error_type": type(e).__name__,
+                "traceback": error_traceback
+            })
 
     def _get_local_ip(self) -> str:
         """Get the local IP address of the machine."""
