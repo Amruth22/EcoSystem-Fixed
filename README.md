@@ -138,17 +138,6 @@ result = crew.run_full_pipeline()               # All agents
 3. **Compliance Agent** - Performs security and compliance assessments
 4. **Developer Experience Agent** - Creates SDKs and developer tools
 
-### 8+ Custom Tools
-
-- **NetworkScannerTool** - Port scanning and service discovery
-- **GitRepositoryAnalyzerTool** - Repository analysis and API detection
-- **SecurityScannerTool** - OWASP compliance and vulnerability scanning
-- **DocumentationBuilderTool** - OpenAPI specification generation
-- **SDKGeneratorTool** - Multi-language SDK generation
-- **ContractValidatorTool** - API contract validation
-- **TestGeneratorTool** - Automated test generation
-- **PerformanceMetricsTool** - Performance analysis
-
 ## Output
 
 The system generates:
