@@ -1,20 +1,5 @@
 # Tools Quick Reference Guide
 
-## Quick Tool Lookup
-
-| # | Tool Name | Purpose | Input | Output | Status |
-|---|-----------|---------|-------|--------|--------|
-| 1 | **Git Repository Analyzer** | Analyze git repos for APIs | `repo_path`, `repo_url` | Repository analysis | ✅ **FIXED** |
-| 2 | **Network Scanner** | Scan network for APIs | `network_range` | Active services | ⚠️ Works |
-| 3 | **Security Scanner** | Vulnerability scanning | `target`, `scan_type` | Security report | ⚠️ Works |
-| 4 | **Contract Validator** | Validate API contracts | `contract_data` | Validation status | ⚠️ Works |
-| 5 | **SDK Generator** | Generate client SDKs | `api_endpoints`, `languages` | SDKs in multiple languages | ⚠️ Works |
-| 6 | **Test Generator** | Generate API tests | `api_spec` | Test suites | ⚠️ Works |
-| 7 | **Documentation Builder** | Generate API docs | `api_data` | OpenAPI docs | ⚠️ Works |
-| 8 | **Performance Metrics** | Collect metrics | `api_endpoint` | Performance data | ⚠️ Works |
-
----
-
 ## One-Liner Usage
 
 ### 1. Git Repository Analyzer ✅
