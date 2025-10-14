@@ -6,6 +6,15 @@ import unittest
 import os
 import sys
 
+# Disable CrewAI telemetry to prevent connection errors
+os.environ['OTEL_SDK_DISABLED'] = 'true'
+os.environ['DO_NOT_TRACK'] = '1'
+
+# Suppress CrewAI telemetry logging
+import logging
+logging.getLogger('crewai.telemetry.telemetry').setLevel(logging.CRITICAL)
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
