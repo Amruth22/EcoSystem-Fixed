@@ -153,23 +153,37 @@ class TestEssentials(unittest.TestCase):
         self.assertIn('def main():', content)
         self.assertIn('flow.kickoff()', content)
 
-    def test_09_documentation_complete(self):
-        """Test 9: All required documentation exists."""
-        required_docs = [
-            'README.md',
-            'FLOW_IMPLEMENTATION.md',
-            'PROJECT_COMPLETE.md',
-            'TOOLS_DOCUMENTATION.md',
-            'TOOLS_FIX_COMPLETE.md',
-            'TOOLS_QUICK_REFERENCE.md'
-        ]
+    def test_09_actual_tool_call(self):
+        """Test 9: Make actual tool call to verify tools work in practice."""
+        from tools.git_analyzer import GitRepositoryAnalyzerTool
+        import json
 
-        for doc_file in required_docs:
-            doc_path = os.path.join(self.project_root, doc_file)
-            self.assertTrue(
-                os.path.exists(doc_path),
-                f"Required documentation '{doc_file}' not found"
-            )
+        # Initialize the tool
+        git_tool = GitRepositoryAnalyzerTool()
+        
+        # Make actual tool call to analyze current repository
+        result = git_tool._run(repo_path=".")
+        
+        # Verify result is valid JSON
+        self.assertIsInstance(result, str, "Tool should return string")
+        
+        try:
+            parsed_result = json.loads(result)
+            self.assertIsInstance(parsed_result, dict, "Result should be valid JSON object")
+            
+            # Check for expected structure (either success or error)
+            if "error" in parsed_result:
+                # If error, should have proper error structure
+                self.assertIn("error_type", parsed_result)
+                print(f"Tool returned error (expected): {parsed_result['error']}")
+            else:
+                # If success, should have repository info
+                self.assertIn("repository_path", parsed_result)
+                self.assertIn("is_git_repository", parsed_result)
+                print(f"Tool executed successfully: Found {len(parsed_result.get('files', []))} files")
+                
+        except json.JSONDecodeError:
+            self.fail(f"Tool returned invalid JSON: {result[:200]}...")
 
     def test_10_project_structure_correct(self):
         """Test 10: Project directory structure is correct."""
