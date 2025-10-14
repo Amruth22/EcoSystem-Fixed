@@ -15,7 +15,6 @@ import logging
 logging.getLogger('crewai.telemetry.telemetry').setLevel(logging.CRITICAL)
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 class TestEssentials(unittest.TestCase):
