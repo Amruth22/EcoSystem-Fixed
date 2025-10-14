@@ -172,13 +172,24 @@ class TestEssentials(unittest.TestCase):
             self.assertIsInstance(parsed_result, dict, "Result should be valid JSON object")
             
             # Check for expected structure (either success or error)
+            # Check for expected structure (either success or error)
             if "error" in parsed_result:
                 # If error, should have proper error structure
                 self.assertIn("error_type", parsed_result)
                 print(f"Tool returned error (expected): {parsed_result['error']}")
             else:
-                # If success, should have repository info
-                self.assertIn("repository_path", parsed_result)
+                # If success, should have repository info (actual response structure)
+                self.assertIn("repository", parsed_result)
+                self.assertIn("active_branch", parsed_result)
+                self.assertIn("file_count", parsed_result)
+                
+                file_count = parsed_result.get('file_count', 0)
+                api_files = len(parsed_result.get('potential_api_files', []))
+                print(f"✅ Tool executed successfully!")
+                print(f"   Repository: {parsed_result.get('repository', 'Unknown')}")
+                print(f"   Branch: {parsed_result.get('active_branch', 'Unknown')}")
+                print(f"   Total files: {file_count}")
+                print(f"   Potential API files: {api_files}")
                 self.assertIn("is_git_repository", parsed_result)
                 print(f"Tool executed successfully: Found {len(parsed_result.get('files', []))} files")
                 
