@@ -1,14 +1,23 @@
 import logging
+import os
 from dotenv import load_dotenv
 from flows.api_ecosystem_flow import APIEcosystemFlow
 from utils.output_handler import process_and_save_results
 
 load_dotenv()
 
+# Disable CrewAI telemetry to prevent connection errors
+os.environ['OTEL_SDK_DISABLED'] = 'true'
+os.environ['DO_NOT_TRACK'] = '1'
+
+# Suppress CrewAI telemetry logging
+logging.getLogger('crewai.telemetry.telemetry').setLevel(logging.CRITICAL)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+logger = logging.getLogger(__name__)
 logger = logging.getLogger(__name__)
 
 
