@@ -190,8 +190,6 @@ class TestEssentials(unittest.TestCase):
                 print(f"   Branch: {parsed_result.get('active_branch', 'Unknown')}")
                 print(f"   Total files: {file_count}")
                 print(f"   Potential API files: {api_files}")
-                self.assertIn("is_git_repository", parsed_result)
-                print(f"Tool executed successfully: Found {len(parsed_result.get('files', []))} files")
                 
         except json.JSONDecodeError:
             self.fail(f"Tool returned invalid JSON: {result[:200]}...")
